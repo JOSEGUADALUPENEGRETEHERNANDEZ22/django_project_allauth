@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Registrarse{% endblock title %}
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <div class="bg-white p-8 rounded-2xl shadow-xl">
+        <h2 class="text-3xl font-semibold text-center text-gray-800">Crear una cuenta nueva</h2>
+        <p class="mt-2 text-center text-sm text-gray-500">Completa los datos para habilitar las funciones del blog. El correo se usa para recuperar tu contraseña.</p>
+
+        <form method="post" action="{% url 'account_signup' %}" class="mt-8 space-y-6">
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+                <div class="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-600">
+                    {{ form.non_field_errors|striptags }}
+                </div>
+            {% endif %}
+
+            <div class="grid gap-6 sm:grid-cols-2">
+                {% for field in form %}
+                    {% if field.is_hidden %}
+                        {{ field }}
+                    {% else %}
+                        <div class="space-y-1 {% if field.field.widget.input_type == 'checkbox' %}sm:col-span-2{% else %}sm:col-span-1{% endif %}">
+                            <label for="{{ field.id_for_label }}" class="block text-sm font-semibold text-gray-700">{{ field.label }}</label>
+                            {% if field.field.widget.input_type == 'checkbox' %}
+                                <div class="flex items-center gap-2 rounded-xl border border-gray-200 bg-gray-50 p-3">
+                                    {{ field }}
+                                    <span class="text-sm text-gray-600">{{ field.help_text|default:"Recordarme en este equipo"|safe }}</span>
+                                </div>
+                            {% else %}
+                                {{ field }}
+                                {% if field.help_text %}
+                                    <p class="text-xs text-gray-500">{{ field.help_text|safe }}</p>
+                                {% endif %}
+                            {% endif %}
+                            {% if field.errors %}
+                                <p class="text-xs font-medium text-red-600">{{ field.errors|striptags }}</p>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+
+            {% if redirect_field_value %}
+                <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+            {% endif %}
+
+            <button type="submit" class="w-full rounded-xl bg-green-500 py-2.5 font-semibold text-white transition duration-200 hover:bg-green-600">
+                Registrarme
+            </button>
+        </form>
+
+        <p class="mt-6 text-center text-sm text-gray-600">
+            ¿Ya tienes cuenta?
+            <a href="{% url 'account_login' %}" class="font-semibold text-blue-600 hover:text-blue-800">Inicia sesión aquí</a>
+        </p>
+    </div>
+</div>
+{% endblock content %}

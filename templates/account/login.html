@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Iniciar Sesión{% endblock title %}
+{% block content %}
+<div class="max-w-lg mx-auto">
+    <div class="bg-white p-8 rounded-2xl shadow-xl">
+        <h2 class="text-3xl font-semibold text-center text-gray-800">Bienvenido de nuevo</h2>
+        <p class="mt-2 text-center text-sm text-gray-500">Ingresa tus credenciales o usa tu correo registrado para acceder.</p>
+
+        <form method="post" action="{% url 'account_login' %}" class="mt-8 space-y-6">
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+                <div class="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-600">
+                    {{ form.non_field_errors|striptags }}
+                </div>
+            {% endif %}
+
+            {% for field in form %}
+                {% if field.is_hidden %}
+                    {{ field }}
+                {% else %}
+                    <div class="space-y-1">
+                        <label for="{{ field.id_for_label }}" class="block text-sm font-semibold text-gray-700">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.help_text %}
+                            <p class="text-xs text-gray-500">{{ field.help_text|safe }}</p>
+                        {% endif %}
+                        {% if field.errors %}
+                            <p class="text-xs font-medium text-red-600">{{ field.errors|striptags }}</p>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            {% endfor %}
+
+            {% if redirect_field_value %}
+                <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+            {% endif %}
+
+            <button type="submit" class="w-full rounded-xl bg-blue-600 py-2.5 font-semibold text-white transition duration-200 hover:bg-blue-700">
+                Entrar
+            </button>
+        </form>
+
+        <div class="mt-6 flex flex-col gap-3 text-center text-sm">
+            <a href="{% url 'account_reset_password' %}" class="text-gray-500 transition hover:text-gray-700">¿Olvidaste tu contraseña?</a>
+            <p class="text-gray-600">
+                ¿Sin cuenta aún?
+                <a href="{% url 'account_signup' %}" class="font-semibold text-blue-600 hover:text-blue-800">Regístrate gratis</a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock content %}
